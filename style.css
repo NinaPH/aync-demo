@@ -1,0 +1,26 @@
+.pokemon-name,
+.pokemon-type {
+  font-family: "Trebuchet MS", "Lucida Sans Unicode", "Lucida Grande",
+    "Lucida Sans", Arial, sans-serif;
+}
+
+.container {
+  max-width: 960px;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 10px;
+  justify-content: center;
+}
+
+.pokemon-container {
+  display: grid;
+  padding: 10px;
+  text-align: center;
+  justify-content: center;
+  border-radius: 10px;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+}
+
+.pokemon-sprite {
+  width: 200px;
+}
