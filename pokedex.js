@@ -1,5 +1,7 @@
-let totalPokemon = 151;
-let numPokemonDisplayed = 4;
+let container = document.querySelector(".container");
+
+let numDisplayed = 4;
+let numPokemon = 151;
 let promises = [];
 
 const typeColors = {
@@ -23,49 +25,40 @@ const typeColors = {
   fairy: "#D685AD",
 };
 
-let container = document.querySelector(".container");
-
-// make 2 x 2 grid
-// load 4 random pokemon
-//display: name, sprite, type
-
-for (let i = 0; i < numPokemonDisplayed; i++) {
-  let randomId = Math.floor(Math.random() * totalPokemon) + 1;
+for (let i = 0; i < numDisplayed; i++) {
+  let randomId = Math.floor(Math.random() * numPokemon) + 1;
   let url = `https://pokeapi.co/api/v2/pokemon/${randomId}`;
-  promises.push(fetch(url).then((res) => res.json()));
+  promises.push(fetch(url).then((result) => result.json()));
 }
 
-Promise.all(promises)
-  .then((pokemonArray) => {
-    pokemonArray.forEach((data) => {
-      let pokemonContainer = document.createElement("div");
-      pokemonContainer.classList.add("pokemon-container");
-      container.appendChild(pokemonContainer);
+Promise.all(promises).then((data) => {
+  data.forEach((pokemon) => {
+    //create container
+    let pokemonContainer = document.createElement("div");
+    pokemonContainer.classList.add("pokemon-container");
+    container.appendChild(pokemonContainer);
 
-      let pokeName = data.name.charAt(0).toUpperCase() + data.name.slice(1);
-      let pokeNameEl = document.createElement("h2");
-      pokeNameEl.classList.add("pokemon-name");
-      pokeNameEl.textContent = pokeName;
-      pokemonContainer.appendChild(pokeNameEl);
+    //display pokemon name
+    let pokemonName =
+      pokemon.name.charAt(0).toUpperCase() + pokemon.name.slice(1);
+    let pokemonNameEl = document.createElement("h2");
+    pokemonNameEl.classList.add("pokemon-name");
+    pokemonNameEl.textContent = pokemonName;
+    pokemonContainer.appendChild(pokemonNameEl);
 
-      let pokeType = data.types[0].type.name;
-      let pokeTypeEl = document.createElement("p");
-      pokeTypeEl.classList.add("pokemon-type");
-      pokeTypeEl.textContent = `${pokeType} type`;
-      pokemonContainer.appendChild(pokeTypeEl);
+    //display pokemon type
+    let pokemonType = pokemon.types[0].type.name;
+    let pokemonTypeEl = document.createElement("p");
+    pokemonTypeEl.classList.add("pokemon-type");
+    pokemonTypeEl.textContent = `${pokemonType} type`;
+    pokemonContainer.style.backgroundColor = typeColors[pokemonType];
+    pokemonContainer.appendChild(pokemonTypeEl);
 
-      let pokeSprite =
-        data.sprites.other["official-artwork"].front_default ||
-        data.sprites.front_default ||
-        "";
-      let pokeSpriteEl = document.createElement("img");
-      pokeSpriteEl.classList.add("pokemon-sprite");
-      pokeSpriteEl.setAttribute("src", pokeSprite);
-      pokemonContainer.appendChild(pokeSpriteEl);
-
-      pokemonContainer.style.backgroundColor = typeColors[pokeType];
-
-      console.log(data.abilities[0].ability.name);
-    });
-  })
-  .catch((error) => console.log("An error occurred: " + error));
+    //display pokemon sprite
+    let pokemonSprite = pokemon.sprites.other["official-artwork"].front_default;
+    let pokemonSpriteEl = document.createElement("img");
+    pokemonSpriteEl.classList.add("pokemon-sprite");
+    pokemonSpriteEl.src = pokemonSprite;
+    pokemonContainer.appendChild(pokemonSpriteEl);
+  });
+});
