@@ -1,5 +1,7 @@
 .pokemon-name,
-.pokemon-type {
+.pokemon-type,
+.error,
+.loading {
   font-family: "Trebuchet MS", "Lucida Sans Unicode", "Lucida Grande",
     "Lucida Sans", Arial, sans-serif;
 }
@@ -7,7 +9,7 @@
 .container {
   max-width: 960px;
   display: grid;
-  grid-template-columns: 1fr 1fr;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
   gap: 10px;
   justify-content: center;
 }
@@ -23,4 +25,24 @@
 
 .pokemon-sprite {
   width: 200px;
+}
+
+.loading {
+  display: block;
+}
+
+.error {
+  background-color: #a98ff3;
+  color: #000000;
+  border-radius: 12px;
+  padding: 20px;
+  font-size: 16px;
+  line-height: 1.4;
+  text-align: center;
+  width: 250px;
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  display: none;
 }

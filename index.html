@@ -7,6 +7,22 @@
     <title>Pokedex</title>
   </head>
   <body>
+    <div class="loading">Loading data...</div>
+    <div class="error"></div>
+    <div class="generate-pokemon">
+      <label for="num-pokemon">Antal Pokémon:</label>
+      <input
+        type="number"
+        name="num-pokemon"
+        id="num-pokemon"
+        min="1"
+        max="16"
+        value="4"
+      />
+      <button class="button">Generér</button>
+      <br></br>
+    </div>
+
     <div class="container"></div>
     <script src="pokedex.js"></script>
   </body>

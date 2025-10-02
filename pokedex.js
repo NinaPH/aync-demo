@@ -1,7 +1,13 @@
 let container = document.querySelector(".container");
+let loadingEl = document.querySelector(".loading");
+let errorEl = document.querySelector(".error");
+let button = document.querySelector(".button");
+let numPokemonEl = document.getElementById("num-pokemon");
 
-let numDisplayed = 4;
-let numPokemon = 151;
+loadingEl.style.display = "block";
+errorEl.style.display = "none";
+
+let maxPokeId = 151;
 let promises = [];
 
 const typeColors = {
@@ -25,40 +31,62 @@ const typeColors = {
   fairy: "#D685AD",
 };
 
-for (let i = 0; i < numDisplayed; i++) {
-  let randomId = Math.floor(Math.random() * numPokemon) + 1;
-  let url = `https://pokeapi.co/api/v2/pokemon/${randomId}`;
-  promises.push(fetch(url).then((result) => result.json()));
+generatePokemon(4);
+
+function generatePokemon(numPokemon) {
+  for (let i = 0; i < numPokemon; i++) {
+    let randomId = Math.floor(Math.random() * maxPokeId) + 1;
+    let url = `https://pokeapi.co/api/v2/pokemon/${randomId}`;
+    promises.push(fetch(url).then((result) => result.json()));
+  }
+
+  Promise.all(promises)
+    .then((data) => {
+      loadingEl.style.display = "none";
+      data.forEach((pokemon) => {
+        //create container
+        let pokemonContainer = document.createElement("div");
+        pokemonContainer.classList.add("pokemon-container");
+        container.appendChild(pokemonContainer);
+
+        //display pokemon name
+        let pokemonName =
+          pokemon.name.charAt(0).toUpperCase() + pokemon.name.slice(1);
+        let pokemonNameEl = document.createElement("h2");
+        pokemonNameEl.classList.add("pokemon-name");
+        pokemonNameEl.textContent = pokemonName;
+        pokemonContainer.appendChild(pokemonNameEl);
+
+        //display pokemon type
+        let pokemonType = pokemon.types[0].type.name;
+        let pokemonTypeEl = document.createElement("p");
+        pokemonTypeEl.classList.add("pokemon-type");
+        pokemonTypeEl.textContent = `${pokemonType} type`;
+        pokemonContainer.style.backgroundColor = typeColors[pokemonType];
+        pokemonContainer.appendChild(pokemonTypeEl);
+
+        //display pokemon sprite
+        let pokemonSprite =
+          pokemon.sprites.other["official-artwork"].front_default;
+        let pokemonSpriteEl = document.createElement("img");
+        pokemonSpriteEl.classList.add("pokemon-sprite");
+        pokemonSpriteEl.src = pokemonSprite;
+        pokemonContainer.appendChild(pokemonSpriteEl);
+      });
+    })
+    .catch((error) => {
+      loadingEl.style.display = "none";
+      errorEl.style.display = "block";
+      errorEl.innerHTML = `<b><i>An error occurred!</b><br>${error}</i>`;
+    });
 }
 
-Promise.all(promises).then((data) => {
-  data.forEach((pokemon) => {
-    //create container
-    let pokemonContainer = document.createElement("div");
-    pokemonContainer.classList.add("pokemon-container");
-    container.appendChild(pokemonContainer);
+button.addEventListener("click", () => {
+  let numPokemon = parseInt(numPokemonEl.value);
+  loadingEl.style.display = "block";
+  errorEl.style.display = "none";
 
-    //display pokemon name
-    let pokemonName =
-      pokemon.name.charAt(0).toUpperCase() + pokemon.name.slice(1);
-    let pokemonNameEl = document.createElement("h2");
-    pokemonNameEl.classList.add("pokemon-name");
-    pokemonNameEl.textContent = pokemonName;
-    pokemonContainer.appendChild(pokemonNameEl);
-
-    //display pokemon type
-    let pokemonType = pokemon.types[0].type.name;
-    let pokemonTypeEl = document.createElement("p");
-    pokemonTypeEl.classList.add("pokemon-type");
-    pokemonTypeEl.textContent = `${pokemonType} type`;
-    pokemonContainer.style.backgroundColor = typeColors[pokemonType];
-    pokemonContainer.appendChild(pokemonTypeEl);
-
-    //display pokemon sprite
-    let pokemonSprite = pokemon.sprites.other["official-artwork"].front_default;
-    let pokemonSpriteEl = document.createElement("img");
-    pokemonSpriteEl.classList.add("pokemon-sprite");
-    pokemonSpriteEl.src = pokemonSprite;
-    pokemonContainer.appendChild(pokemonSpriteEl);
-  });
+  container.innerHTML = "";
+  promises = [];
+  generatePokemon(numPokemon);
 });
